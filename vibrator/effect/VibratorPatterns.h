@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,17 +27,48 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QTI_VIBRATOR_EFFECT_STREAM_H
-#define QTI_VIBRATOR_EFFECT_STREAM_H
+#ifndef  VIBRATOR_PATTERNS_H
+#define  VIBRATOR_PATTERNS_H
+
 #include <sys/types.h>
 
-struct effect_stream {
-    uint32_t   	    effect_id;
-    uint32_t        length;
-    uint32_t        play_rate_hz;
-    const int8_t    *data;
+struct effect {
+    uint16_t effect_id;
+    uint16_t effect_type;
+    uint16_t effect_len;
+    uint16_t offset;
+    uint32_t play_rate;
 };
 
-const struct effect_stream *get_effect_stream(uint32_t effect_id);
+enum period {
+    S_PERIOD_T_LRA = 0,
+    S_PERIOD_T_LRA_DIV_2,
+    S_PERIOD_T_LRA_DIV_4,
+    S_PERIOD_T_LRA_DIV_8,
+    S_PERIOD_T_LRA_X_2,
+    S_PERIOD_T_LRA_X_4,
+    S_PERIOD_T_LRA_X_8,
+    /* F_8KHZ to F_48KHZ can be specified only for FIFO patterns */
+    S_PERIOD_F_8KHZ = 8,
+    S_PERIOD_F_16KHZ,
+    S_PERIOD_F_24KHZ,
+    S_PERIOD_F_32KHZ,
+    S_PERIOD_F_44P1KHZ,
+    S_PERIOD_F_48KHZ,
+};
 
+enum effect_type {
+    EFFECT_TYPE_PATTERN = 1,
+    EFFECT_TYPE_FIFO_ENVELOPE,
+    EFFECT_TYPE_FIFO_STREAMING,
+};
+
+enum offload_status {
+    OFFLOAD_SUCCESS = 0,
+    OFFLOAD_FAILURE = 1
+};
+
+int get_pattern_config(uint8_t **ptr, uint32_t *size);
+int get_pattern_data(uint8_t **ptr, uint32_t *size);
+void free_pattern_mem(uint8_t *ptr);
 #endif
